@@ -65,7 +65,7 @@ left_arm
 left_hand
 right_hand
 arm
-claw
+CLAWS
 
 ** Sensors:
 sensor_color

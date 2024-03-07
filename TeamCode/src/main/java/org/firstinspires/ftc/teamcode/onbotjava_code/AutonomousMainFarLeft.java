@@ -1,3 +1,5 @@
+package org.firstinspires.ftc.teamcode.onbotjava_code;
+
 import java.util.List;
 
 import org.firstinspires.ftc.vision.apriltag.AprilTagDetection;
@@ -74,7 +76,7 @@ public class AutonomousMainFarLeft extends LinearOpMode {
 			clawArmAngle(CLAW_CONTROL_CLOSED_POS);
 			sleep(400);
 			returnToStart(pixelPosition);
-			park();
+			//park();
 			//putPurple(pixelPosition);
 			telemetry.addData("Status", "Sleeping");
 			UpdateTelemetryPosition();
@@ -269,14 +271,12 @@ public class AutonomousMainFarLeft extends LinearOpMode {
 		}else{
 			throw new RuntimeException("Cannot get claw: " + claw);
 		}
-
 	}
 
 
 	private void clawArmAngle(double initClawAngle) {
 		clawControl.setPosition(initClawAngle);
 	}
-
 	int fl = 0;
 	int fr = 0;
 	int rl = 0;
@@ -478,10 +478,10 @@ public class AutonomousMainFarLeft extends LinearOpMode {
 	}
 
 	private void initControls(){
-		frontLeft = hardwareMap.dcMotor.get("br");
-		frontRight = hardwareMap.dcMotor.get("bl");
-		rearLeft = hardwareMap.dcMotor.get("fr");
-		rearRight = hardwareMap.dcMotor.get("fl");
+		frontLeft = hardwareMap.dcMotor.get("leftFront");
+		frontRight = hardwareMap.dcMotor.get("rightFront");
+		rearLeft = hardwareMap.dcMotor.get("leftBack");
+		rearRight = hardwareMap.dcMotor.get("rightBack");
 
 		armExtendLeft = hardwareMap.dcMotor.get("acr");
 		armExtendRight = hardwareMap.dcMotor.get("acl");

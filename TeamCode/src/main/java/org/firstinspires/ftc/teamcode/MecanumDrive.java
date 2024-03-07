@@ -54,10 +54,7 @@ import java.util.List;
 @Config
 public final class MecanumDrive {
     public static class Params {
-        // IMU orientation
-        // TODO: fill in these values based on
-        //   see https://ftc-docs.firstinspires.org/en/latest/programming_resources/imu/imu.html?highlight=imu#physical-hub-mounting
-        public RevHubOrientationOnRobot.LogoFacingDirection logoFacingDirection =
+       public RevHubOrientationOnRobot.LogoFacingDirection logoFacingDirection =
                 RevHubOrientationOnRobot.LogoFacingDirection.RIGHT;
         public RevHubOrientationOnRobot.UsbFacingDirection usbFacingDirection =
                 RevHubOrientationOnRobot.UsbFacingDirection.UP;
@@ -82,9 +79,9 @@ public final class MecanumDrive {
         public double maxAngAccel = Math.PI * 4;
 
         // path controller gains
-        public double axialGain = 10;
-        public double lateralGain = 5;
-        public double headingGain = 30; // shared with turn
+        public double axialGain = 6;
+        public double lateralGain = 3.5;
+        public double headingGain = 7; // shared with turn
 
         public double axialVelGain = 0.1;
         public double lateralVelGain = 0.1;
@@ -301,8 +298,8 @@ public final class MecanumDrive {
 
 
 
-            if ((t >= timeTrajectory.duration && error.position.norm() < 1
-                    && robotVelRobot.linearVel.norm() < 0.2 && robotVelRobot.angVel < 0.02) || t >= timeTrajectory.duration + 5) {
+            if ((t >= timeTrajectory.duration && error.position.norm() < 1.5
+                    && robotVelRobot.linearVel.norm() < 0.3 && robotVelRobot.angVel < 0.03) || t >= timeTrajectory.duration + 2) {
                 leftFront.setPower(0);
                 leftBack.setPower(0);
                 rightBack.setPower(0);
@@ -397,7 +394,7 @@ public final class MecanumDrive {
             Pose2d error = txWorldTarget.value().minusExp(pose);
 
             if ((t >= turn.duration && error.position.norm() < 0.8
-                    && robotVelRobot.linearVel.norm() < 0.2 && robotVelRobot.angVel < 0.01) || t >= turn.duration + 10) {
+                    && robotVelRobot.linearVel.norm() < 0.2 && robotVelRobot.angVel < 0.01) || t >= turn.duration + 2) {
                 leftFront.setPower(0);
                 leftBack.setPower(0);
                 rightBack.setPower(0);
