@@ -17,19 +17,8 @@ import com.qualcomm.robotcore.hardware.Servo;
 public class TeleOperation extends LinearOpMode {
 	
 	private ElapsedTime runtime = new ElapsedTime();
-	DcMotor frontLeft;
-	DcMotor frontRight;
-	DcMotor rearLeft;
-	DcMotor rearRight;
-	DcMotor armExtendLeft;
-	DcMotor armExtendRight;
-	DcMotor armControlLeft;
-	DcMotor armControlRight;	
-	Servo clawControl;
-	Servo clawLeft;
-	Servo clawRight;
-	Servo launch;
-	Servo launchAngle;
+	DcMotor frontLeft, frontRight, rearLeft, rearRight, armExtendLeft, armExtendRight, armControlLeft, armControlRight;
+	Servo clawControl, clawLeft, clawRight, launch, launchAngle;
 
 	private final int MAX_ARM_EXTENTION = 9999;
 	private final int MAX_ARM_ROTATION = 1000;
@@ -40,10 +29,10 @@ public class TeleOperation extends LinearOpMode {
 		telemetry.addData("Status", "Initialized");
 		telemetry.update();
 
-		frontLeft = hardwareMap.dcMotor.get("br");
-		frontRight = hardwareMap.dcMotor.get("bl");
-		rearLeft = hardwareMap.dcMotor.get("fr");
-		rearRight = hardwareMap.dcMotor.get("fl");
+		frontLeft = hardwareMap.dcMotor.get("leftFront");
+		frontRight = hardwareMap.dcMotor.get("rightFront");
+		rearLeft = hardwareMap.dcMotor.get("leftBack");
+		rearRight = hardwareMap.dcMotor.get("rightBack");
 		armExtendLeft = hardwareMap.dcMotor.get("acr");
 		armExtendRight = hardwareMap.dcMotor.get("acl");
 		armControlLeft = hardwareMap.dcMotor.get("aer");
@@ -191,12 +180,12 @@ public class TeleOperation extends LinearOpMode {
 			}
 	   
 			if (Cground) {
-				clawControl.setPosition(0.535);
+				clawControl.setPosition(0.472);
 			} else {
-				clawControl.setPosition(0.535 + 0.04);
+				clawControl.setPosition(0.472 + 0.04);
 			}	
 		} else if (gamepad2.a) {
-			clawControl.setPosition(0.51);
+			clawControl.setPosition(0.465);
 		}
 
 
@@ -256,13 +245,13 @@ public class TeleOperation extends LinearOpMode {
 		///////		LAUNCH		///////
 
 		if (gamepad1.x) {
-		launchAngle.setPosition(43/180f);
+		launchAngle.setPosition(40/180f);
 		sleep(1000);
 		launch.setPosition(0.5f);
 		sleep(1000);
 		launch.setPosition(-0.5f);
 		sleep(500);
-		launchAngle.setPosition(15/180f);
+		launchAngle.setPosition(60/180f);
 		}
 
 
