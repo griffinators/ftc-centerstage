@@ -11,8 +11,8 @@ public final class Arm {
         public int DETECTION_ARM_EXTENSION = 0;
         public int GROUND_ARM_ROTATION = 100;
         public int GROUND_ARM_EXTENSION = 0;
-        public int BOARD_ARM_ROTATION = 0;
-        public int BOARD_ARM_EXTENSION = 0;
+        public int BOARD_ARM_ROTATION = 170;
+        public int BOARD_ARM_EXTENSION = 300;
     }
 
     DcMotor armExtendLeft;
@@ -63,7 +63,13 @@ public final class Arm {
                     armControlLeft.setPower(0.05);
                     armControlRight.setPower(0.05);
                     setExtension(PARAMS.GROUND_ARM_EXTENSION, false);
-                    setRotation(PARAMS.GROUND_ARM_ROTATION, blocking);
+                    setRotation(PARAMS.GROUND_ARM_ROTATION + 100, blocking);
+                    try {
+                        Thread.sleep(100);
+                    } catch (InterruptedException e) {
+                        throw new RuntimeException(e);
+                    }
+                    setRotation(PARAMS.BOARD_ARM_ROTATION, blocking);
                     armControlLeft.setPower(1);
                     armControlRight.setPower(1);
                 }else {

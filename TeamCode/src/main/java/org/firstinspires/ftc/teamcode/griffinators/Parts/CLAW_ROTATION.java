@@ -4,4 +4,5 @@ public enum CLAW_ROTATION {
     GROUND,
     HIDDEN,
     DETECTION,
+    BOARD,
 }
