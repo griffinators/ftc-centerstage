@@ -10,6 +10,7 @@ public final class Claw {
         public double CLAW_CONTROL_DETECTION_POSITION = 0.365;
         public double CLAW_CONTROL_GROUND_POS = 0.48;
         public double CLAW_CONTROL_CLOSED_POS = 0.61;
+        public double CLAW_CONTROL_BOARD_POS = 0.54;
 
         public double LEFT_CLAW_REST = 0.75;
         public double RIGHT_CLAW_REST = 0.2;
@@ -49,6 +50,9 @@ public final class Claw {
             case GROUND: clawControl.setPosition(PARAMS.CLAW_CONTROL_GROUND_POS);
                 break;
             case HIDDEN: clawControl.setPosition(PARAMS.CLAW_CONTROL_CLOSED_POS);
+                break;
+            case BOARD:
+                clawControl.setPosition(PARAMS.CLAW_CONTROL_BOARD_POS);
                 break;
         }
     }
