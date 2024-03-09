@@ -15,17 +15,20 @@ import org.firstinspires.ftc.vision.tfod.TfodProcessor;
 import java.util.ArrayList;
 
 public final class Detection {
-    private static final String TFOD_MODEL_FILE = "/sdcard/FIRST/tflitemodels/Griffinators.tflite";
+    private static final String TFOD_MODEL_FILE = "/sdcard/FIRST/tflitemodels/Griffinators_v2.tflite";
     // Define the labels recognized in the model for TFOD (must be in training order!)
     private static final String[] LABELS = {
-            "R",
-            "B"
+            "B",
+            "R"
     };
 
+    private final String correctLabel;
     private TfodProcessor tfod;
     private VisionPortal visionPortal;
-    public Detection(HardwareMap hardwareMap){
+    public Detection(HardwareMap hardwareMap, String correctLabel){
+        this.correctLabel = correctLabel;
         initRecognition(hardwareMap);
+
     }
 
     private void initRecognition(HardwareMap hardwareMap) {
@@ -43,6 +46,9 @@ public final class Detection {
         tfod.setMinResultConfidence(0.7f);
     }
 
+    public void stream(){
+        visionPortal.resumeStreaming();
+    }
     public Action getRecognition(ArrayList<Recognition> recognitions, double timeOut){
         return new GetRecognitions(recognitions, timeOut);
     }
@@ -65,9 +71,13 @@ public final class Detection {
             double t = Actions.now() - startTime;
             ArrayList<Recognition> currentRecognitions = (ArrayList<Recognition>) tfod.getRecognitions();
 
-            if (currentRecognitions.size() == 1){
-                recognitions.add(currentRecognitions.get(0));
-                return false;
+            if (currentRecognitions.size() > 0){
+                for (Recognition recognition : currentRecognitions) {
+                 if (recognition.getLabel().equals(correctLabel)){
+                     recognitions.add(recognition);
+                     return false;
+                 }
+                }
             }
             if (t > timeOut) {
                 return false;

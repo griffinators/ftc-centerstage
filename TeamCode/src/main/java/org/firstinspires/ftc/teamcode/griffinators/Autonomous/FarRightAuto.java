@@ -19,42 +19,41 @@ import org.firstinspires.ftc.teamcode.griffinators.Parts.Detection;
 import java.util.ArrayList;
 
 @Config
-@Autonomous(name = "Far Left", group = "Auto")
-public class FarLeftAuto extends LinearOpMode {
-    //todo: make sure that left and right are correct teams and change object to recognise.
+@Autonomous(name = "Far Right", group = "Auto")
+public class FarRightAuto extends LinearOpMode {
     public static class Params{
         public double _0initX = -24;
-        public double _0initY = 60;
-        public double _0initRot = -Math.PI / 2;
+        public double _0initY = -60;
+        public double _0initRot = Math.PI / 2;
 
         public double _1DetectionStrafeX = -4;
 
-        public double _2strafeFrontY = -24.1;
-        public double _2strafeFrontX = -3;
+        public double _2strafeFrontY = 24.1;
+        public double _2strafeFrontX = -5;
 
-        public double _2strafeRightY = -13;
-        public double _2strafeRightX = -9.5;
+        public double _2strafeRightY = 13;
+        public double _2strafeRightX = -11.8;
 
-        public double _2splineLeftY = -30;
+        public double _2splineLeftY = 30;
         public double _2splineLeftX = -0.5;
-        public double _2splineLeftRot = 0.14;
+        public double _2splineLeftRot = -0.14;
 
-        public double _3splineMiddleY = -56;
+        public double _3splineMiddleY = 56;
         public double _3splineMiddleX = 5;
         public double _3splineMiddleRot = 0;
 
-        public double _3splineBoardY = -25;
+        public double _3splineBoardY = 25;
         public double _3splineBoardX = 72;
-        public double _3splineBoardRot = 0.05;
+        public double _3splineBoardRot = -0.05;
 
-        public double _4strafeBoardFrontY = 3;
-        public double _4strafeBoardFrontX = 15;
+        public double _4strafeBoardFrontY = -2;
+        public double _4strafeBoardFrontX = 14;
 
-        public double _4strafeBoardRightY = -3.8;
-        public double _4strafeBoardRightX = 15;
+        public double _4strafeBoardRightY = 2.8;
+        public double _4strafeBoardRightX = 14;
 
-        public double _4strafeBoardLeftY = 11.5;
-        public double _4strafeBoardLeftX = 15;
+        public double _4strafeBoardLeftY = -10.5;
+        public double _4strafeBoardLeftX = 14;
 
     }
     public static Params params = new Params();
@@ -65,7 +64,7 @@ public class FarLeftAuto extends LinearOpMode {
     @Override
     public void runOpMode() throws InterruptedException {
         drive = new MecanumDrive(hardwareMap, new Pose2d(params._0initX, params._0initY, params._0initRot));
-        detection = new Detection(hardwareMap, "B");
+        detection = new Detection(hardwareMap, "R");
         claw = new Claw(hardwareMap);
         arm = new Arm(hardwareMap);
 
@@ -86,8 +85,8 @@ public class FarLeftAuto extends LinearOpMode {
 
         Pose2d nearBoardPos = new Pose2d(drive.pose.position.plus(new Vector2d(params._3splineBoardX, params._3splineBoardY)), params._3splineBoardRot);
 
-        Action moveToBoard = drive.actionBuilder(new Pose2d(drive.pose.position.plus(new Vector2d(0, -7)), drive.pose.heading))
-                .strafeTo(drive.pose.position.plus(new Vector2d(-11, -7)))
+        Action moveToBoard = drive.actionBuilder(new Pose2d(drive.pose.position.plus(new Vector2d(0, 10)), drive.pose.heading))
+                .strafeTo(drive.pose.position.plus(new Vector2d(-13.5, 10)))
                 .splineToConstantHeading(drive.pose.position.plus(new Vector2d(params._3splineMiddleX, params._3splineMiddleY)), params._3splineMiddleRot)
                 .strafeTo(drive.pose.position.plus(new Vector2d(params._3splineMiddleX + 56, params._3splineMiddleY)))
                 .splineToLinearHeading(new Pose2d(nearBoardPos.position, 0), params._3splineBoardRot, drive.defaultVelConstraint, drive.defaultAccelConstraint)
@@ -134,11 +133,11 @@ public class FarLeftAuto extends LinearOpMode {
                 Actions.runBlocking(moveToRightPixelPos);
                 break;
         }
-        claw.openLeft();
+        claw.openRight();
         sleep(400);
         claw.controlRotation(CLAW_ROTATION.HIDDEN);
         sleep(400);
-        claw.closeLeft();
+        claw.closeRight();
         Actions.runBlocking(moveToBoard);
         sleep(1000);
         switch (pixelPos){
@@ -158,22 +157,25 @@ public class FarLeftAuto extends LinearOpMode {
         sleep(700);
         arm.setPosition(ARM_POSITIONS.BOARD, true);
         sleep(400);
-        claw.openRight();
+        claw.openLeft();
 
         Action returnToBoard = drive.actionBuilder(drive.pose)
                 .strafeTo(nearBoardPos.position)
                 .build();
 
         Actions.runBlocking(returnToBoard);
-        sleep(10000);
+        sleep(500);
+        arm.setExtension(0, false);
+        arm.setRotation(0, true);
         //go for white
+        sleep(1000);
     }
 
     private int parsePixelPos(ArrayList<Recognition> recognitions) {
         if (recognitions.size() == 0) {
             return 0;
         } else {
-            if ((recognitions.get(0).getRight() + recognitions.get(0).getLeft()) / 2 > 320) {
+            if ((recognitions.get(0).getRight() + recognitions.get(0).getLeft()) / 2 < 320) {
                 return 2;
             } else {
                 return 1;
@@ -191,3 +193,4 @@ public class FarLeftAuto extends LinearOpMode {
         sleep(time);
     }
 }
+

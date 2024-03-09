@@ -9,10 +9,10 @@ public final class Arm {
     public static class Params{
         public int DETECTION_ARM_ROTATION = 500;
         public int DETECTION_ARM_EXTENSION = 0;
-        public int GROUND_ARM_ROTATION = 100;
+        public int GROUND_ARM_ROTATION = 125;
         public int GROUND_ARM_EXTENSION = 0;
-        public int BOARD_ARM_ROTATION = 170;
-        public int BOARD_ARM_EXTENSION = 300;
+        public int BOARD_ARM_ROTATION = 215;
+        public int BOARD_ARM_EXTENSION = 340;
     }
 
     DcMotor armExtendLeft;
@@ -59,23 +59,10 @@ public final class Arm {
     public void setPosition(ARM_POSITIONS armPosition, boolean blocking){
         switch (armPosition){
             case GROUND:
-                if (armControlRight.getCurrentPosition() > PARAMS.GROUND_ARM_ROTATION + 100){
-                    armControlLeft.setPower(0.05);
-                    armControlRight.setPower(0.05);
-                    setExtension(PARAMS.GROUND_ARM_EXTENSION, false);
-                    setRotation(PARAMS.GROUND_ARM_ROTATION + 100, blocking);
-                    try {
-                        Thread.sleep(100);
-                    } catch (InterruptedException e) {
-                        throw new RuntimeException(e);
-                    }
-                    setRotation(PARAMS.BOARD_ARM_ROTATION, blocking);
-                    armControlLeft.setPower(1);
-                    armControlRight.setPower(1);
-                }else {
-                    setExtension(PARAMS.GROUND_ARM_EXTENSION, false);
-                    setRotation(PARAMS.GROUND_ARM_ROTATION, blocking);
-                }
+                armControlLeft.setPower(1);
+                armControlRight.setPower(1);
+                setExtension(PARAMS.GROUND_ARM_EXTENSION, false);
+                setRotation(PARAMS.GROUND_ARM_ROTATION, blocking);
                 break;
             case BOARD:
                 setExtension(PARAMS.BOARD_ARM_EXTENSION, false);
@@ -88,13 +75,13 @@ public final class Arm {
         }
     }
 
-    private void setExtension(int amount, boolean blocking){
+    public void setExtension(int amount, boolean blocking){
         armExtendLeft.setTargetPosition(amount);
         armExtendRight.setTargetPosition(amount);
         if (blocking) waitForArmsToFinish();
     }
 
-    private void setRotation(int amount, boolean blocking){
+    public void setRotation(int amount, boolean blocking){
         armControlLeft.setTargetPosition(amount);
         armControlRight.setTargetPosition(amount);
         if (blocking) waitForArmsToFinish();
