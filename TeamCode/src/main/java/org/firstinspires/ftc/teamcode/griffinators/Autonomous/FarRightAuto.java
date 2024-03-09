@@ -26,7 +26,7 @@ public class FarRightAuto extends LinearOpMode {
         public double _0initY = -60;
         public double _0initRot = Math.PI / 2;
 
-        public double _1DetectionStrafeX = -4;
+        public double _1DetectionStrafeX = -5.2;
 
         public double _2strafeFrontY = 24.1;
         public double _2strafeFrontX = -5;
@@ -50,9 +50,9 @@ public class FarRightAuto extends LinearOpMode {
         public double _4strafeBoardFrontX = 14;
 
         public double _4strafeBoardRightY = 2.8;
-        public double _4strafeBoardRightX = 14;
+        public double _4strafeBoardRightX = 13.5;
 
-        public double _4strafeBoardLeftY = -10.5;
+        public double _4strafeBoardLeftY = -10.8;
         public double _4strafeBoardLeftX = 14;
 
     }
@@ -102,6 +102,11 @@ public class FarRightAuto extends LinearOpMode {
                 .strafeTo(nearBoardPos.position.plus(new Vector2d(params._4strafeBoardRightX, params._4strafeBoardRightY)))
                 .build();
 
+        Action park = drive.actionBuilder(nearBoardPos)
+                .strafeTo(nearBoardPos.position.plus(new Vector2d(0, 25)))
+                .strafeTo(nearBoardPos.position.plus(new Vector2d(28, 25)))
+                .strafeTo(nearBoardPos.position.plus(new Vector2d(28, 17)))
+                .build();
 
         claw.closeLeft();
         claw.closeRight();
@@ -120,7 +125,7 @@ public class FarRightAuto extends LinearOpMode {
         telemetry.addData("Pixel pos", "" + pixelPos);
         telemetry.update();
         claw.controlRotation(CLAW_ROTATION.GROUND);
-        sleep(900);
+        sleep(700);
         arm.setPosition(ARM_POSITIONS.GROUND, true);
         switch (pixelPos){
             case 0:
@@ -134,12 +139,11 @@ public class FarRightAuto extends LinearOpMode {
                 break;
         }
         claw.openRight();
-        sleep(400);
-        claw.controlRotation(CLAW_ROTATION.HIDDEN);
-        sleep(400);
+        sleep(300);
+        claw.controlRotation(CLAW_ROTATION.BOARD);
+        sleep(300);
         claw.closeRight();
         Actions.runBlocking(moveToBoard);
-        sleep(1000);
         switch (pixelPos){
             case 0:
                 Actions.runBlocking(moveToLeftBoard);
@@ -152,11 +156,8 @@ public class FarRightAuto extends LinearOpMode {
                 break;
         }
 
-
-        claw.controlRotation(CLAW_ROTATION.BOARD);
-        sleep(700);
         arm.setPosition(ARM_POSITIONS.BOARD, true);
-        sleep(400);
+        sleep(300);
         claw.openLeft();
 
         Action returnToBoard = drive.actionBuilder(drive.pose)
@@ -164,11 +165,11 @@ public class FarRightAuto extends LinearOpMode {
                 .build();
 
         Actions.runBlocking(returnToBoard);
-        sleep(500);
+        claw.closeRight();
+        claw.controlRotation(CLAW_ROTATION.HIDDEN);
+        arm.setRotation(0, false);
         arm.setExtension(0, false);
-        arm.setRotation(0, true);
-        //go for white
-        sleep(1000);
+        Actions.runBlocking(park);
     }
 
     private int parsePixelPos(ArrayList<Recognition> recognitions) {

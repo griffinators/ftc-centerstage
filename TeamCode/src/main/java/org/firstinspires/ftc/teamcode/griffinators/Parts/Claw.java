@@ -7,7 +7,7 @@ import com.qualcomm.robotcore.hardware.Servo;
 @Config
 public final class Claw {
     public static class Params {
-        public double CLAW_CONTROL_DETECTION_POSITION = 0.376;
+        public double CLAW_CONTROL_DETECTION_POSITION = 0.373;
         public double CLAW_CONTROL_GROUND_POS = 0.48;
         public double CLAW_CONTROL_CLOSED_POS = 0.64;
         public double CLAW_CONTROL_BOARD_POS = 0.543;
