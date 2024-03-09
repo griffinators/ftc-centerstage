@@ -1,4 +1,4 @@
-package org.firstinspires.ftc.teamcode.onbotjava_code;
+package org.firstinspires.ftc.teamcode.griffinators;
 
 import com.acmerobotics.roadrunner.Pose2d;
 import com.qualcomm.robotcore.util.ElapsedTime;
@@ -11,7 +11,6 @@ import org.firstinspires.ftc.teamcode.Localizer;
 import org.firstinspires.ftc.teamcode.MecanumDrive;
 import org.firstinspires.ftc.teamcode.ThreeDeadWheelLocalizer;
 
-@Deprecated
 /*
  IMPORTANT: Motor names are reconfigured during the migration to switch orientation.
  Affected code includes `hardwareMap.*.get` statements and which DcMotors are reversed
