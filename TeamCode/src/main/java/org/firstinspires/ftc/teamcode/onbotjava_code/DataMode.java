@@ -1,9 +1,9 @@
-package org.firstinspires.ftc.teamcode.onbotjava_code;
-
+import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.hardware.DcMotor;
 
+@Disabled
 @Deprecated
 /*
  IMPORTANT: Motor names are reconfigured during the migration to switch orientation.

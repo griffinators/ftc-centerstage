@@ -1,4 +1,4 @@
-package org.firstinspires.ftc.teamcode.onbotjava_code;
+package org.firstinspires.ftc.teamcode.griffinators;
 
 import com.acmerobotics.roadrunner.Pose2d;
 import com.qualcomm.robotcore.util.ElapsedTime;
@@ -11,7 +11,6 @@ import org.firstinspires.ftc.teamcode.Localizer;
 import org.firstinspires.ftc.teamcode.MecanumDrive;
 import org.firstinspires.ftc.teamcode.ThreeDeadWheelLocalizer;
 
-@Deprecated
 /*
  IMPORTANT: Motor names are reconfigured during the migration to switch orientation.
  Affected code includes `hardwareMap.*.get` statements and which DcMotors are reversed
@@ -21,12 +20,10 @@ import org.firstinspires.ftc.teamcode.ThreeDeadWheelLocalizer;
 
 public class TeleOperation extends LinearOpMode {
 	
-	private ElapsedTime runtime = new ElapsedTime();
+	private final ElapsedTime runtime = new ElapsedTime();
 	DcMotor frontLeft, frontRight, rearLeft, rearRight, armExtendLeft, armExtendRight, armControlLeft, armControlRight;
 	Servo clawControl, clawLeft, clawRight, launch, launchAngle;
 
-	private final int MAX_ARM_EXTENTION = 9999;
-	private final int MAX_ARM_ROTATION = 1000;
 	private Pose2d pose = new Pose2d(0,0,0);
 	@Override
 	public void runOpMode() throws InterruptedException{
@@ -91,7 +88,7 @@ public class TeleOperation extends LinearOpMode {
 
 
 
-		
+
 		////////	MOVEMENT	///////		
 
 		pose = pose.plus(localizer.update().value());
@@ -125,7 +122,10 @@ public class TeleOperation extends LinearOpMode {
 		if (gamepad1.right_bumper) {
 			pose = new Pose2d(0,0,0);
 		}
-		
+		if (gamepad1.left_bumper) {
+			pose = new Pose2d(0,0,Math.PI);
+		}
+
 		if (time1.seconds() < 0.6 && runtime.seconds() > 2) {
 			turn = 1;
 		}
@@ -218,7 +218,7 @@ public class TeleOperation extends LinearOpMode {
 		
 		if (gamepad2.dpad_left) {
 			time2.reset();
-			setExtention(0);
+			setExtension(0);
 			sleep(200);
 			setRotation(50);
 			sleep(200);
@@ -227,47 +227,47 @@ public class TeleOperation extends LinearOpMode {
 			Cground = false;
 		} else if (gamepad2.dpad_up) {
 			setRotation(170);
-			setExtention(200);
+			setExtension(200);
 			clawControl.setPosition(0.54);
 			Aground = false;
 			Cground = false;
 		} else if (gamepad2.dpad_right) {
 			setRotation(230);
-			setExtention(400);
+			setExtension(400);
 			clawControl.setPosition(0.53);
 			Aground = false;
 			Cground = false;
 		} else if (gamepad2.dpad_down) {
 			setRotation(280);
-			setExtention(500);
+			setExtension(500);
 			clawControl.setPosition(0.52);
 			Aground = false;
 			Cground = false;
 		} else if (gamepad2.x) {
 		 	setRotation(320);
-		 	setExtention(600);
+		 	setExtension(600);
 		 	clawControl.setPosition(0.52);
 		 	Aground = false;
 		 	Cground = false;
 		} else if (gamepad2.y) {
 			setRotation(360);
-			setExtention(700);
+			setExtension(700);
 			clawControl.setPosition(0.52);
 			Aground = false;
 			Cground = false;
 		} else if (gamepad2.b) {
 			setRotation(390);
-			setExtention(800);
+			setExtension(800);
 			clawControl.setPosition(0.52);
 			Aground = false;
 			Cground = false;
 		} else if (gamepad1.b) {
 			setRotation(800);
-			setExtention(400);	
+			setExtension(400);
 			Aground = false;
 			Cground = false;
 		} else if (gamepad1.y) {
-			setExtention(0);
+			setExtension(0);
 			setRotation(400);
 			Aground = false;
 			Cground = false;
@@ -310,7 +310,7 @@ public class TeleOperation extends LinearOpMode {
 	
 	
 	
-	private void setExtention(int amount){
+	private void setExtension(int amount){
 		armExtendLeft.setTargetPosition(amount);
 		armExtendRight.setTargetPosition(amount);
 	}

@@ -1,6 +1,5 @@
-package org.firstinspires.ftc.teamcode.onbotjava_code;
-
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
+import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.Servo;
@@ -14,6 +13,7 @@ import org.firstinspires.ftc.vision.tfod.TfodProcessor;
 
 import java.util.List;
 
+@Disabled
 @Deprecated
 /*
  IMPORTANT: Motor names are reconfigured during the migration to switch orientation.

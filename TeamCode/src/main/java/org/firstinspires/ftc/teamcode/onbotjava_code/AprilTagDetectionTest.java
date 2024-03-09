@@ -1,4 +1,4 @@
-package org.firstinspires.ftc.teamcode.onbotjava_code;/* Copyright (c) 2023 FIRST. All rights reserved.
+/* Copyright (c) 2023 FIRST. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without modification,
  * are permitted (subject to the limitations in the disclaimer below) provided that
@@ -27,6 +27,7 @@ package org.firstinspires.ftc.teamcode.onbotjava_code;/* Copyright (c) 2023 FIRS
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
+import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import org.firstinspires.ftc.robotcore.external.hardware.camera.BuiltinCameraDirection;
@@ -37,6 +38,7 @@ import org.firstinspires.ftc.vision.apriltag.AprilTagProcessor;
 
 import java.util.List;
 
+@Disabled
 @Deprecated
 /*
  IMPORTANT: Motor names are reconfigured during the migration to switch orientation.
