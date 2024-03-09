@@ -1,10 +1,15 @@
 package org.firstinspires.ftc.teamcode.onbotjava_code;
 
+import com.acmerobotics.roadrunner.Pose2d;
 import com.qualcomm.robotcore.util.ElapsedTime;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.Servo;
+
+import org.firstinspires.ftc.teamcode.Localizer;
+import org.firstinspires.ftc.teamcode.MecanumDrive;
+import org.firstinspires.ftc.teamcode.ThreeDeadWheelLocalizer;
 
 @Deprecated
 /*
@@ -22,9 +27,9 @@ public class TeleOperation extends LinearOpMode {
 
 	private final int MAX_ARM_EXTENTION = 9999;
 	private final int MAX_ARM_ROTATION = 1000;
-	
+	private Pose2d pose = new Pose2d(0,0,0);
 	@Override
-	public void runOpMode() {
+	public void runOpMode() throws InterruptedException{
 		
 		telemetry.addData("Status", "Initialized");
 		telemetry.update();
@@ -52,6 +57,7 @@ public class TeleOperation extends LinearOpMode {
 		float basicPower = 0.4f;
 		ElapsedTime time1 = new ElapsedTime();
 		ElapsedTime time2 = new ElapsedTime();
+		Localizer localizer = new ThreeDeadWheelLocalizer(hardwareMap, MecanumDrive.PARAMS.inPerTick);
 
 		armExtendLeft.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
 		armExtendRight.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
@@ -76,14 +82,10 @@ public class TeleOperation extends LinearOpMode {
 		boolean LclawChangeable = true;
 		boolean Ropen = false;
 		boolean RclawChangeable = true;
-		boolean Cground = true;
+		boolean Cground = false;
 		boolean CgroundChangeable = true;
 		boolean Aground = true;
-		boolean suspend = false;
-		boolean suspendChangeable = true;
-		
-		boolean teamBlue = false;
-		
+
 		while (opModeIsActive()) {
 
 
@@ -91,22 +93,37 @@ public class TeleOperation extends LinearOpMode {
 
 		
 		////////	MOVEMENT	///////		
-		
-		double x = teamBlue ? gamepad1.left_stick_y + gamepad2.left_stick_y / 5: -gamepad1.left_stick_y - gamepad2.left_stick_y / 5;
-		double y = teamBlue ? gamepad1.left_stick_x + gamepad2.left_stick_x / 5: -gamepad1.left_stick_x - gamepad2.left_stick_x / 5;
-		double turn = gamepad1.right_stick_x/2 + gamepad2.right_stick_x/5;
-		double theta = Math.atan2(y, x);
+
+		pose = pose.plus(localizer.update().value());
+		double x;
+		double y;
+		if (Math.hypot(-gamepad1.left_stick_y,-gamepad1.left_stick_x) >= 0.95) {
+			x = -gamepad1.left_stick_y - gamepad2.left_stick_y / 5;
+			y = -gamepad1.left_stick_x - gamepad2.left_stick_x / 5;
+		} else {
+			x = -gamepad1.left_stick_y/2 - gamepad2.left_stick_y / 5;
+			y = -gamepad1.left_stick_x/2 - gamepad2.left_stick_x / 5;
+		}
+		double theta = Math.atan2(y, x) - Math.PI / 4 - pose.heading.log();
 		double power = Math.hypot(x, y);
-		double sin = Math.sin(theta - Math.PI / 4);
-		double cos = Math.cos(theta - Math.PI / 4);
+		double turn;
+		if (Math.abs(gamepad1.right_stick_x) >= 0.95) {
+			turn = gamepad1.right_stick_x/2 + gamepad2.right_stick_x/4;
+		} else {
+			turn = gamepad1.right_stick_x/4 + gamepad2.right_stick_x/4;
+		}
+		double sin = Math.sin(theta);
+		double cos = Math.cos(theta);
 		double max = Math.max(Math.abs(sin), Math.abs(cos));
 			
 		if (gamepad1.dpad_left) {
 			time1.reset();
-			teamBlue = false;
 		} else if (gamepad1.dpad_right) {
 			time1.reset();
-			teamBlue = true;
+		}
+
+		if (gamepad1.right_bumper) {
+			pose = new Pose2d(0,0,0);
 		}
 		
 		if (time1.seconds() < 0.6 && runtime.seconds() > 2) {
@@ -125,10 +142,10 @@ public class TeleOperation extends LinearOpMode {
 			RRpower /= power + turn;
 		}
 
-		frontLeft.setPower(-FLpower);
-		frontRight.setPower(FRpower);
-		rearLeft.setPower(-RLpower);
-		rearRight.setPower(RRpower);		   
+		frontLeft.setPower(-FLpower * 2);
+		frontRight.setPower(FRpower * 2);
+		rearLeft.setPower(-RLpower * 2);
+		rearRight.setPower(RRpower * 2);
 
 
 
@@ -136,10 +153,10 @@ public class TeleOperation extends LinearOpMode {
 
 		///////		CLAW	///////
 
-		double openPos = 0.15;
-		double closedPos = 0.34;
+		double openPos = 0.12;
+		double closedPos = 0.32;
 		// double closedPos = 0.36; // too tight
-		double leftMax = 0.92;
+		double leftMax = 0.89;
 		
 		if (gamepad2.left_bumper) {
 			if (LclawChangeable) {
@@ -205,27 +222,45 @@ public class TeleOperation extends LinearOpMode {
 			sleep(200);
 			setRotation(50);
 			sleep(200);
-			setRotation(00);
+			setRotation(0);
 			Aground = true;
 			Cground = false;
 		} else if (gamepad2.dpad_up) {
-			setRotation(250);
-			setExtention(400);
-			clawControl.setPosition(0.58);
+			setRotation(170);
+			setExtention(200);
+			clawControl.setPosition(0.54);
 			Aground = false;
 			Cground = false;
 		} else if (gamepad2.dpad_right) {
-			setRotation(350);
-			setExtention(700);
-			clawControl.setPosition(0.56);
+			setRotation(230);
+			setExtention(400);
+			clawControl.setPosition(0.53);
 			Aground = false;
 			Cground = false;
-		// } else if (gamepad2.dpad_down) {
-		// 	setRotation(350);
-		// 	setExtention(700);
-		// 	clawControl.setPosition(0.56);
-		// 	Aground = false;
-		// 	Cground = false;
+		} else if (gamepad2.dpad_down) {
+			setRotation(280);
+			setExtention(500);
+			clawControl.setPosition(0.52);
+			Aground = false;
+			Cground = false;
+		} else if (gamepad2.x) {
+		 	setRotation(320);
+		 	setExtention(600);
+		 	clawControl.setPosition(0.52);
+		 	Aground = false;
+		 	Cground = false;
+		} else if (gamepad2.y) {
+			setRotation(360);
+			setExtention(700);
+			clawControl.setPosition(0.52);
+			Aground = false;
+			Cground = false;
+		} else if (gamepad2.b) {
+			setRotation(390);
+			setExtention(800);
+			clawControl.setPosition(0.52);
+			Aground = false;
+			Cground = false;
 		} else if (gamepad1.b) {
 			setRotation(800);
 			setExtention(400);	
@@ -263,7 +298,7 @@ public class TeleOperation extends LinearOpMode {
 		telemetry.addData("RunTime", "time:" + runtime);
 		//telemetry.addData("Booleans", "ground: " + ground);	 
 		telemetry.addData("Position", "Extension: " + armExtendLeft.getCurrentPosition() + " " + armExtendRight.getCurrentPosition()
-		+ "; Rotation: " + armControlLeft.getCurrentPosition() + " " + armControlRight.getCurrentPosition());
+		+ "; Rotation: " + armControlLeft.getCurrentPosition() + " " + armControlRight.getCurrentPosition() + "; rot: " + " " + pose.heading.log());
 		telemetry.addData("Input", "gamepad_l_x: " + gamepad2.left_stick_x + "; gamepad_l_y: " + gamepad2.left_stick_y + "gamepad_r_x"
 		+ gamepad2.right_stick_x + "gamepad_Y: " + gamepad2.y);
 		telemetry.update();
