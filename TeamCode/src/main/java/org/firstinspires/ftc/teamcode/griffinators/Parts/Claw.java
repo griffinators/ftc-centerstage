@@ -26,8 +26,8 @@ public final class Claw {
     public static Params PARAMS = new Params();
     public Claw(HardwareMap hardwareMap){
         clawControl = hardwareMap.servo.get("c");
-        clawLeft = hardwareMap.servo.get("cr");
-        clawRight = hardwareMap.servo.get("cl");
+        clawLeft = hardwareMap.servo.get("cl");
+        clawRight = hardwareMap.servo.get("cr");
     }
 
     public void openLeft(){

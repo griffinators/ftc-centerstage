@@ -23,10 +23,10 @@ public final class Arm {
     public static Params PARAMS = new Params();
 
     public Arm(HardwareMap hardwareMap){
-        armExtendLeft = hardwareMap.dcMotor.get("acr");
-        armExtendRight = hardwareMap.dcMotor.get("acl");
-        armControlLeft = hardwareMap.dcMotor.get("aer");
-        armControlRight = hardwareMap.dcMotor.get("ael");
+        armExtendLeft = hardwareMap.dcMotor.get("acl");
+        armExtendRight = hardwareMap.dcMotor.get("acr");
+        armControlLeft = hardwareMap.dcMotor.get("ael");
+        armControlRight = hardwareMap.dcMotor.get("aer");
 
         armControlLeft.setDirection(DcMotor.Direction.REVERSE);
         armExtendLeft.setDirection(DcMotor.Direction.REVERSE);

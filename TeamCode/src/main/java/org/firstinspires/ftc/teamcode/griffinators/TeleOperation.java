@@ -11,17 +11,12 @@ import org.firstinspires.ftc.teamcode.Localizer;
 import org.firstinspires.ftc.teamcode.MecanumDrive;
 import org.firstinspires.ftc.teamcode.ThreeDeadWheelLocalizer;
 
-/*
- IMPORTANT: Motor names are reconfigured during the migration to switch orientation.
- Affected code includes `hardwareMap.*.get` statements and which DcMotors are reversed
-*/
-
 @TeleOp(name="TeleOperation", group="Robot")
 
 public class TeleOperation extends LinearOpMode {
 	
 	private final ElapsedTime runtime = new ElapsedTime();
-	DcMotor frontLeft, frontRight, rearLeft, rearRight, armExtendLeft, armExtendRight, armControlLeft, armControlRight;
+	DcMotor frontLeft, frontRight, backLeft, backRight, armExtendLeft, armExtendRight, armControlLeft, armControlRight;
 	Servo clawControl, clawLeft, clawRight, launch, launchAngle;
 
 	private Pose2d pose = new Pose2d(0,0,0);
@@ -33,20 +28,22 @@ public class TeleOperation extends LinearOpMode {
 
 		frontLeft = hardwareMap.dcMotor.get("leftFront");
 		frontRight = hardwareMap.dcMotor.get("rightFront");
-		rearLeft = hardwareMap.dcMotor.get("leftBack");
-		rearRight = hardwareMap.dcMotor.get("rightBack");
-		armExtendLeft = hardwareMap.dcMotor.get("acr");
-		armExtendRight = hardwareMap.dcMotor.get("acl");
-		armControlLeft = hardwareMap.dcMotor.get("aer");
-		armControlRight = hardwareMap.dcMotor.get("ael");	
+		backLeft = hardwareMap.dcMotor.get("leftBack");
+		backRight = hardwareMap.dcMotor.get("rightBack");
+		armExtendLeft = hardwareMap.dcMotor.get("acl");
+		armExtendRight = hardwareMap.dcMotor.get("acr");
+		armControlLeft = hardwareMap.dcMotor.get("ael");
+		armControlRight = hardwareMap.dcMotor.get("aer");
 		clawControl = hardwareMap.servo.get("c");
-		clawLeft = hardwareMap.servo.get("cr");
-		clawRight = hardwareMap.servo.get("cl");
+		clawLeft = hardwareMap.servo.get("cl");
+		clawRight = hardwareMap.servo.get("cr");
 		launch = hardwareMap.servo.get("l");
 		launchAngle = hardwareMap.servo.get("lc");
 
 		armControlLeft.setDirection(DcMotor.Direction.REVERSE);
 		armExtendLeft.setDirection(DcMotor.Direction.REVERSE);
+		frontLeft.setDirection(DcMotor.Direction.REVERSE);
+		backLeft.setDirection(DcMotor.Direction.REVERSE);
 
 		waitForStart();
 		runtime.reset();
@@ -92,16 +89,24 @@ public class TeleOperation extends LinearOpMode {
 		////////	MOVEMENT	///////		
 
 		pose = pose.plus(localizer.update().value());
-		double x;
-		double y;
-		if (Math.hypot(-gamepad1.left_stick_y,-gamepad1.left_stick_x) >= 0.95) {
-			x = -gamepad1.left_stick_y - gamepad2.left_stick_y / 5;
-			y = -gamepad1.left_stick_x - gamepad2.left_stick_x / 5;
-		} else {
-			x = -gamepad1.left_stick_y/2 - gamepad2.left_stick_y / 5;
-			y = -gamepad1.left_stick_x/2 - gamepad2.left_stick_x / 5;
+		if (gamepad1.right_bumper) {
+			pose = new Pose2d(0,0,-Math.PI/2);
 		}
-		double theta = Math.atan2(y, x) - Math.PI / 4 - pose.heading.log();
+		if (gamepad1.left_bumper) {
+			pose = new Pose2d(0,0,Math.PI/2);
+		}
+
+		double x = responseCurve(gamepad1.left_stick_x,	3,0.9);
+		double y = responseCurve(-gamepad1.left_stick_y, 3, 0.9);
+//		double turn = responseCurve(gamepad1.right_stick_x, 5, 0.95);
+//		if (Math.hypot(-gamepad1.left_stick_y,-gamepad1.left_stick_x) >= 0.95) {
+//			x = -gamepad1.left_stick_y - gamepad2.left_stick_y / 5;
+//			y = -gamepad1.left_stick_x - gamepad2.left_stick_x / 5;
+//		} else {
+//			x = -gamepad1.left_stick_y/2 - gamepad2.left_stick_y / 5;
+//			y = -gamepad1.left_stick_x/2 - gamepad2.left_stick_x / 5;
+//		}
+		double theta = Math.atan2(y, x);
 		double power = Math.hypot(x, y);
 		double turn;
 		if (Math.abs(gamepad1.right_stick_x) >= 0.95) {
@@ -109,8 +114,8 @@ public class TeleOperation extends LinearOpMode {
 		} else {
 			turn = gamepad1.right_stick_x/4 + gamepad2.right_stick_x/4;
 		}
-		double sin = Math.sin(theta);
-		double cos = Math.cos(theta);
+		double sin = Math.sin(theta - Math.PI/4 - pose.heading.log());
+		double cos = Math.cos(theta - Math.PI/4 - pose.heading.log());
 		double max = Math.max(Math.abs(sin), Math.abs(cos));
 			
 		if (gamepad1.dpad_left) {
@@ -119,33 +124,26 @@ public class TeleOperation extends LinearOpMode {
 			time1.reset();
 		}
 
-		if (gamepad1.right_bumper) {
-			pose = new Pose2d(0,0,0);
-		}
-		if (gamepad1.left_bumper) {
-			pose = new Pose2d(0,0,Math.PI);
-		}
-
 		if (time1.seconds() < 0.6 && runtime.seconds() > 2) {
 			turn = 1;
 		}
 
 		double FLpower = power * cos/max + turn;
 		double FRpower = power * sin/max - turn;
-		double RLpower = power * sin/max + turn;
-		double RRpower = power * cos/max - turn;
+		double BLpower = power * sin/max + turn;
+		double BRpower = power * cos/max - turn;
 
 		if((power + Math.abs(turn)) > 1) {
 			FLpower /= power + turn;
 			FRpower /= power + turn;
-			RLpower /= power + turn;
-			RRpower /= power + turn;
+			BLpower /= power + turn;
+			BRpower /= power + turn;
 		}
 
-		frontLeft.setPower(-FLpower * 2);
-		frontRight.setPower(FRpower * 2);
-		rearLeft.setPower(-RLpower * 2);
-		rearRight.setPower(RRpower * 2);
+		frontLeft.setPower(FLpower);
+		frontRight.setPower(FRpower);
+		backLeft.setPower(BLpower);
+		backRight.setPower(BRpower);
 
 
 
@@ -299,8 +297,8 @@ public class TeleOperation extends LinearOpMode {
 		//telemetry.addData("Booleans", "ground: " + ground);	 
 		telemetry.addData("Position", "Extension: " + armExtendLeft.getCurrentPosition() + " " + armExtendRight.getCurrentPosition()
 		+ "; Rotation: " + armControlLeft.getCurrentPosition() + " " + armControlRight.getCurrentPosition() + "; rot: " + " " + pose.heading.log());
-		telemetry.addData("Input", "gamepad_l_x: " + gamepad2.left_stick_x + "; gamepad_l_y: " + gamepad2.left_stick_y + "gamepad_r_x"
-		+ gamepad2.right_stick_x + "gamepad_Y: " + gamepad2.y);
+		telemetry.addData("Gamepad 1", "gamepad1_l_x: " + gamepad1.left_stick_x + "; gamepad1_l_y: " + gamepad1.left_stick_y + "gamepad1_r_x" + gamepad1.right_stick_x + "gamepad1_Y: " + gamepad1.y);
+		telemetry.addData("Gamepad 2", "gamepad2_l_x: " + gamepad2.left_stick_x + "; gamepad2_l_y: " + gamepad2.left_stick_y + "gamepad2_r_x" + gamepad2.right_stick_x + "gamepad2_Y: " + gamepad2.y);
 		telemetry.update();
 		}
 	}
@@ -318,5 +316,9 @@ public class TeleOperation extends LinearOpMode {
 	private void setRotation(int amount){
 		armControlLeft.setTargetPosition(amount);
 		armControlRight.setTargetPosition(amount);
+	}
+
+	private double responseCurve (double raw, int curvePower, double maxThreshold) {
+		return Math.copySign(Math.min(Math.pow(Math.abs(raw)/maxThreshold, curvePower), 1), raw);
 	}
 }
