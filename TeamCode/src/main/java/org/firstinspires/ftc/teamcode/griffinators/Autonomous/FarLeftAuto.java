@@ -19,6 +19,7 @@ import org.firstinspires.ftc.teamcode.griffinators.Parts.Detection;
 import java.util.ArrayList;
 
 @Config
+
 @Autonomous(name = "Far Left", group = "Auto")
 public class FarLeftAuto extends LinearOpMode {
     //todo: make sure that left and right are correct teams and change object to recognise.

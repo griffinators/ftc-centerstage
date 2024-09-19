@@ -20,7 +20,8 @@ import java.util.ArrayList;
 
 @Config
 @Autonomous(name = "Close Right", group = "Auto")
-public class CloseRightAuto extends LinearOpMode {
+public class CloseRightAuto extends LinearOpMode
+{
     //todo: make sure that left and right are correct teams and change object to recognise.
     public static class Params{
         public double _0initX = 24;
@@ -60,7 +61,8 @@ public class CloseRightAuto extends LinearOpMode {
     private Claw claw;
     private Arm arm;
     @Override
-    public void runOpMode() throws InterruptedException {
+    public void runOpMode() throws InterruptedException
+    {
         drive = new MecanumDrive(hardwareMap, new Pose2d(params._0initX, params._0initY, params._0initRot));
         detection = new Detection(hardwareMap, "B");
         claw = new Claw(hardwareMap);
@@ -118,7 +120,8 @@ public class CloseRightAuto extends LinearOpMode {
         claw.controlRotation(CLAW_ROTATION.GROUND);
         sleep(900);
         arm.setPosition(ARM_POSITIONS.GROUND, true);
-        switch (pixelPos){
+        switch (pixelPos)
+        {
             case 0:
                 Actions.runBlocking(moveToLeftPixelPos);
                 break;
@@ -129,13 +132,15 @@ public class CloseRightAuto extends LinearOpMode {
                 Actions.runBlocking(moveToRightPixelPos);
                 break;
         }
+
         claw.openRight();
         sleep(400);
         claw.controlRotation(CLAW_ROTATION.HIDDEN);
         sleep(400);
         claw.closeRight();
         Actions.runBlocking(moveToBoard);
-        switch (pixelPos){
+        switch (pixelPos)
+        {
             case 0:
                 Actions.runBlocking(moveToLeftBoard);
                 break;
@@ -163,25 +168,34 @@ public class CloseRightAuto extends LinearOpMode {
         //go for white
     }
 
-    private int parsePixelPos(ArrayList<Recognition> recognitions) {
-        if (recognitions.size() == 0) {
+    private int parsePixelPos(ArrayList<Recognition> recognitions)
+    {
+        if (recognitions.size() == 0)
+        {
             return 2;
-        } else {
-            if ((recognitions.get(0).getRight() + recognitions.get(0).getLeft()) / 2 < 320) {
+        }
+        else
+        {
+            if ((recognitions.get(0).getRight() + recognitions.get(0).getLeft()) / 2 < 320)
+            {
                 return 0;
-            } else {
+            }
+            else
+            {
                 return 1;
             }
         }
     }
 
-    private void recognitionPos(){
+    private void recognitionPos()
+    {
         claw.controlRotation(CLAW_ROTATION.DETECTION);
         arm.setPosition(ARM_POSITIONS.DETECTION, true);
         sleep(300);
     }
 
-    public void wait(int time){
+    public void wait(int time)
+    {
         sleep(time);
     }
 }

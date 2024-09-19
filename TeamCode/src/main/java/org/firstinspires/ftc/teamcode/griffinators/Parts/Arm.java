@@ -5,8 +5,10 @@ import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 
 @Config
-public final class Arm {
-    public static class Params{
+public final class Arm
+{
+    public static class Params
+    {
         public int DETECTION_ARM_ROTATION = 500;
         public int DETECTION_ARM_EXTENSION = 0;
         public int GROUND_ARM_ROTATION = 125;
@@ -22,7 +24,8 @@ public final class Arm {
 
     public static Params PARAMS = new Params();
 
-    public Arm(HardwareMap hardwareMap){
+    public Arm(HardwareMap hardwareMap)
+    {
         armExtendLeft = hardwareMap.dcMotor.get("acl");
         armExtendRight = hardwareMap.dcMotor.get("acr");
         armControlLeft = hardwareMap.dcMotor.get("ael");
@@ -56,8 +59,10 @@ public final class Arm {
         armControlLeft.setPower(1f);
         armControlRight.setPower(1f);
     }
-    public void setPosition(ARM_POSITIONS armPosition, boolean blocking){
-        switch (armPosition){
+    public void setPosition(ARM_POSITIONS armPosition, boolean blocking)
+    {
+        switch (armPosition)
+        {
             case GROUND:
                 armControlLeft.setPower(1);
                 armControlRight.setPower(1);
@@ -75,19 +80,21 @@ public final class Arm {
         }
     }
 
-    public void setExtension(int amount, boolean blocking){
+    public void setExtension(int amount, boolean blocking)
+    {
         armExtendLeft.setTargetPosition(amount);
         armExtendRight.setTargetPosition(amount);
         if (blocking) waitForArmsToFinish();
     }
 
-    public void setRotation(int amount, boolean blocking){
+    public void setRotation(int amount, boolean blocking)
+    {
         armControlLeft.setTargetPosition(amount);
         armControlRight.setTargetPosition(amount);
         if (blocking) waitForArmsToFinish();
     }
-    private void waitForArmsToFinish(){
-        while ((armControlLeft.isBusy() || armControlRight.isBusy()) && (armExtendLeft.isBusy() || armExtendRight.isBusy())) {
-        }
+    private void waitForArmsToFinish()
+    {
+        while ((armControlLeft.isBusy() || armControlRight.isBusy()) && (armExtendLeft.isBusy() || armExtendRight.isBusy()));
     }
 }
