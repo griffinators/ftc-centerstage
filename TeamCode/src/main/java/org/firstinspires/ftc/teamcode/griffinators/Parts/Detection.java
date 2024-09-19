@@ -14,7 +14,8 @@ import org.firstinspires.ftc.vision.tfod.TfodProcessor;
 
 import java.util.ArrayList;
 
-public final class Detection {
+public final class Detection
+{
     private static final String TFOD_MODEL_FILE = "/sdcard/FIRST/tflitemodels/Griffinators_v2.tflite";
     // Define the labels recognized in the model for TFOD (must be in training order!)
     private static final String[] LABELS = {
@@ -25,13 +26,15 @@ public final class Detection {
     private final String correctLabel;
     private TfodProcessor tfod;
     private VisionPortal visionPortal;
-    public Detection(HardwareMap hardwareMap, String correctLabel){
+    public Detection(HardwareMap hardwareMap, String correctLabel)
+    {
         this.correctLabel = correctLabel;
         initRecognition(hardwareMap);
 
     }
 
-    private void initRecognition(HardwareMap hardwareMap) {
+    private void initRecognition(HardwareMap hardwareMap)
+    {
         tfod = new TfodProcessor.Builder()
                 .setModelFileName(TFOD_MODEL_FILE)
                 .setModelLabels(LABELS)
@@ -46,50 +49,59 @@ public final class Detection {
         tfod.setMinResultConfidence(0.7f);
     }
 
-    public void stream(){
+    public void stream()
+    {
         visionPortal.resumeStreaming();
     }
-    public Action getRecognition(ArrayList<Recognition> recognitions, double timeOut){
+    public Action getRecognition(ArrayList<Recognition> recognitions, double timeOut)
+    {
         return new GetRecognitions(recognitions, timeOut);
     }
 
-    public class GetRecognitions implements Action{
+    public class GetRecognitions implements Action
+    {
         private final ArrayList<Recognition> recognitions;
         private final double timeOut;
         private double startTime = 0;
 
-        public GetRecognitions(ArrayList<Recognition> recognitions, double timeOut) {
+        public GetRecognitions(ArrayList<Recognition> recognitions, double timeOut)
+        {
             this.recognitions = recognitions;
             this.timeOut = timeOut;
         }
 
         @Override
-        public boolean run(@NonNull TelemetryPacket telemetryPacket) {
+        public boolean run(@NonNull TelemetryPacket telemetryPacket)
+        {
             if (startTime == 0){
                 startTime = Actions.now();
             }
             double t = Actions.now() - startTime;
             ArrayList<Recognition> currentRecognitions = (ArrayList<Recognition>) tfod.getRecognitions();
 
-            if (currentRecognitions.size() > 0){
-                for (Recognition recognition : currentRecognitions) {
-                 if (recognition.getLabel().equals(correctLabel)){
+            if (currentRecognitions.size() > 0)
+            {
+                for (Recognition recognition : currentRecognitions)
+                {
+                    if (recognition.getLabel().equals(correctLabel))
+                    {
                      recognitions.add(recognition);
                      return false;
-                 }
+                    }
                 }
             }
-            if (t > timeOut) {
+            if (t > timeOut)
+            {
                 return false;
             }
-            if (currentRecognitions.size() > 1) {
+            if (currentRecognitions.size() > 1)
+            {
                 telemetryPacket.put("Detection Status", "More than one object");
                 return true;
             }
             currentRecognitions.size();
             telemetryPacket.put("Detection Status", "Cannot find any object");
             return true;
-
         }
     }
 }

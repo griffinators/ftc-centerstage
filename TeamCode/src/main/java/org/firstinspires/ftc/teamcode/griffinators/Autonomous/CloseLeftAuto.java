@@ -20,9 +20,11 @@ import java.util.ArrayList;
 
 @Config
 @Autonomous(name = "Close Left", group = "Auto")
-public class CloseLeftAuto extends LinearOpMode {
+public class CloseLeftAuto extends LinearOpMode
+{
     //todo: make sure that left and right are correct teams and change object to recognise.
-    public static class Params{
+    public static class Params
+    {
         public double _0initX = 24;
         public double _0initY = 60;
         public double _0initRot = -Math.PI / 2;
@@ -60,7 +62,8 @@ public class CloseLeftAuto extends LinearOpMode {
     private Claw claw;
     private Arm arm;
     @Override
-    public void runOpMode() throws InterruptedException {
+    public void runOpMode() throws InterruptedException
+    {
         drive = new MecanumDrive(hardwareMap, new Pose2d(params._0initX, params._0initY, params._0initRot));
         detection = new Detection(hardwareMap, "B");
         claw = new Claw(hardwareMap);

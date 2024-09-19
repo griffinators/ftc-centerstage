@@ -80,11 +80,8 @@ public class TeleOperation extends LinearOpMode {
 		boolean CgroundChangeable = true;
 		boolean Aground = true;
 
-		while (opModeIsActive()) {
-
-
-
-
+		while (opModeIsActive())
+		{
 
 		////////	MOVEMENT	///////		
 
